@@ -2,7 +2,7 @@ import random
 import numpy as np
 from ..bot_control import Move
 
-class RamboTheRando:
+class Rokusho:
 
     def __init__(self):
         self.target = None
@@ -16,6 +16,12 @@ class RamboTheRando:
     def determine_next_move(self, grid, enemies, game_info):
         # Chooses a random target location, and moves there.
         # Once it's there, choose a new location.
+
+        self.determine_preference(grid, enemies, game_info)
+
+        print(enemies)
+
+        print(game_info)
 
         # Create a target in storage if doesn't exist
         if  self.target is None:
@@ -35,3 +41,8 @@ class RamboTheRando:
             return Move.UP
         else:
             return Move.DOWN
+
+    def determine_preference(self, grid, enemies, game_info):
+
+        preference_grid = np.mod(grid - self.id, 3)
+        print(preference_grid)
