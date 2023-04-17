@@ -28,8 +28,8 @@ class Rokusho:
                                  Move.DOWN: np.array([0, -1], dtype=np.int16),
                                  Move.STAY: np.array([0, 0], dtype=np.int16)}
 
-        np.set_printoptions(threshold=sys.maxsize, linewidth=200)
-        np.set_printoptions(formatter={'float': lambda x: "{0:0.1f}".format(x)})
+        # np.set_printoptions(threshold=sys.maxsize, linewidth=200)
+        # np.set_printoptions(formatter={'float': lambda x: "{0:0.1f}".format(x)})
 
         self.kernel = gkern(l=3, sig=1)
         self.max_blur_steps = 1
@@ -53,22 +53,17 @@ class Rokusho:
         preference_grid = self.determine_preference(grid, scoreboard)
         best_moves = self.get_best_moves(preference_grid, neighbors)
 
-        self.print_neighbor_values(preference_grid, neighbors)
-
         # Throw away neighbors that are not in best moves
         neighbors = {move: neighbor for move, neighbor in neighbors.items() if move in best_moves}
 
         steps = 0
         while len(best_moves) > 1 and steps < self.max_blur_steps:
             blurred_grid = signal.convolve2d(preference_grid, self.kernel, mode='same')
-            self.print_neighbor_values(blurred_grid, neighbors)
             best_moves = self.get_best_moves(blurred_grid, neighbors)
 
             # Throw away neighbors that are not in best moves
             neighbors = {move: neighbor for move, neighbor in neighbors.items() if move in best_moves}
             steps += 1
-
-        print("\n")
 
         return np.random.choice(best_moves, 1)[0]
 
@@ -108,7 +103,6 @@ class Rokusho:
         # Calculate enemy scores normalized to the highest score so far
         max_score = max(max(scoreboard.values()), 1)
         normalized_enemy_scores = {k: v/max_score for k, v in scoreboard.items() if k is not self.id}
-        print("Normalized enemy scores: \n{}".format(normalized_enemy_scores))
 
         # Substitute the scores in the respective grid cells
         enemy_score_grid = np.zeros_like(grid, dtype=float)
